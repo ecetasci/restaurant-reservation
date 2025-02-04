@@ -26,7 +26,7 @@ public class Reservation {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @ManyToMany(mappedBy = "reservations")
+    @ManyToMany(mappedBy = "reservations",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<RestaurantTable> restaurantTables;
 
     private Long peopleCount;
