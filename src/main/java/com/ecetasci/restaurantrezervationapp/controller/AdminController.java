@@ -23,4 +23,6 @@ public class AdminController {
         Long id = adminService.save(admin);
         return id;
     }
+
+
 }
