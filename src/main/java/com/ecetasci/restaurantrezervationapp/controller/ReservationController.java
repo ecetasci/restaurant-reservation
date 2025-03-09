@@ -17,18 +17,13 @@ public class ReservationController {
     ReservationService reservationService;
 
     @GetMapping("/{id}")
-    public Reservation getReservation(@PathVariable Long id) {
+    public ReservationDto getReservation(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
 
     @GetMapping("/list")
-    public List<Reservation> getAllreservation(@RequestParam List<Reservation> list) {
-        return reservationService.getAll();
-    }
-
-    @PostMapping("/save")
-    public Long saveReservation(@RequestBody Reservation reservation) {
-        return reservationService.saveReservation(reservation);
+    public List<ReservationDto> getAllreservation() {
+        return reservationService.getAllDtos();
     }
 
     @PostMapping("/create")

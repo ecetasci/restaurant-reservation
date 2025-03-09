@@ -1,5 +1,7 @@
 package com.ecetasci.restaurantrezervationapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,8 +21,8 @@ public class RestaurantTable {
 
     @ManyToMany
     @JoinTable(name = "reservation_table",
-               joinColumns = @JoinColumn(name = "restaurant_table_id"),
-               inverseJoinColumns = @JoinColumn(name = "reservation_id"))
+            joinColumns = @JoinColumn(name = "restaurant_table_id"),
+            inverseJoinColumns = @JoinColumn(name = "reservation_id"))
     private List<Reservation> reservations;
 
 

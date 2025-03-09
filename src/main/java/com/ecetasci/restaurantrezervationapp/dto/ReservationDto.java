@@ -5,6 +5,7 @@ import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
 import java.time.LocalDateTime;
 
 public class ReservationDto {
+    private Long id;
     private Long restaurantId;
 
     private String customerName;
@@ -54,5 +55,13 @@ public class ReservationDto {
 
     public void setRestaurantId(Long restaurantId) {
         this.restaurantId = restaurantId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -12,6 +12,7 @@ import com.ecetasci.restaurantrezervationapp.repository.RestaurantTableRepositor
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +38,40 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public Reservation getReservationById(Long id) {
+    public ReservationDto getReservationById(Long id) {
         Optional<Reservation> reservationOptional = reservationRepository.findById(id);
         if (reservationOptional.isPresent()) {
-            return reservationOptional.get();
+            Reservation reservation = reservationOptional.get();
+            return getReservationDto(reservation);
         } else
             throw new NoSuchElementException("Reservation not found with id: " + id);
     }
 
     public Long saveReservation(Reservation reservation) {
         Reservation savedReservation = reservationRepository.save(reservation);
-        Long id = savedReservation.getReservationId();
-        return id;
+        return savedReservation.getReservationId();
+    }
+
+    public List<ReservationDto> getAllDtos() {
+        List<Reservation> all = reservationRepository.findAll();
+        return all.stream().map(this::getReservationDto).toList();
+    }
+
+    private ReservationDto getReservationDto(Reservation reservation) {
+        ReservationDto dto = new ReservationDto();
+        dto.setId(reservation.getReservationId());
+        dto.setRestaurantId(reservation.getRestaurant().getId());
+        dto.setCustomerName(reservation.getCustomer().getName());
+        dto.setCustomerPhoneNumber(reservation.getCustomer().getPhoneNumber());
+        dto.setPeopleCounts(reservation.getPeopleCount());
+        dto.setReservationTime(reservation.getReservationTime());
+        return dto;
     }
 
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
     }
+
 
 
     @Transactional

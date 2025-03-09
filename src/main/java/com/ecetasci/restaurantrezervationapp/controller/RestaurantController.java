@@ -1,5 +1,6 @@
 package com.ecetasci.restaurantrezervationapp.controller;
 
+import com.ecetasci.restaurantrezervationapp.dto.RestaurantDto;
 import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
 import com.ecetasci.restaurantrezervationapp.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class RestaurantController {
     public Long saveRestaurant(@RequestBody Restaurant restaurant) {
         Long id = restaurantService.saveRestaurant(restaurant);
         return id;
+    }
+
+    @PostMapping("/create")
+    public Long createRestaurant(@RequestBody RestaurantDto restaurant) {
+        return restaurantService.saveRestaurant(restaurant);
     }
 
 
