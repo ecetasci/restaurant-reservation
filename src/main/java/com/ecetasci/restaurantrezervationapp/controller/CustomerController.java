@@ -1,5 +1,6 @@
 package com.ecetasci.restaurantrezervationapp.controller;
 
+import com.ecetasci.restaurantrezervationapp.dto.CustomerDto;
 import com.ecetasci.restaurantrezervationapp.entity.Customer;
 import com.ecetasci.restaurantrezervationapp.repository.CustomerRepository;
 import com.ecetasci.restaurantrezervationapp.service.CustomerService;
@@ -16,8 +17,9 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+
     @PostMapping("/save")
-    public Long addCustomer(@RequestBody Customer customer) {
+    public Long addCustomer(@RequestBody CustomerDto customer) {
         long id = customerService.saveCustomer(customer);
         return id;
     }

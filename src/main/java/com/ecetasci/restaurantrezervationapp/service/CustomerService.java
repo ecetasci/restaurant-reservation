@@ -1,5 +1,7 @@
 package com.ecetasci.restaurantrezervationapp.service;
 
+import com.ecetasci.restaurantrezervationapp.dto.CustomerDto;
+import com.ecetasci.restaurantrezervationapp.dto.ReservationDto;
 import com.ecetasci.restaurantrezervationapp.entity.Customer;
 import com.ecetasci.restaurantrezervationapp.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,15 @@ public class CustomerService {
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
-    public long saveCustomer(Customer customer) {
+    public long saveCustomer(CustomerDto customerDto) {
+        Customer customer = new Customer();//nesne oluşturduktan sonra dtodan gelen parametreyle verilerle set ediyoruz.
+        customer.setName(customerDto.getName());
+        customer.setPhoneNumber(customerDto.getPhoneNumber());
+
         Customer save = customerRepository.save(customer);
         return save.getId();
     }
+
 
     public List<Customer> findAll() {
         return customerRepository.findAll();

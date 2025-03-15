@@ -1,5 +1,6 @@
 package com.ecetasci.restaurantrezervationapp.controller;
 
+import com.ecetasci.restaurantrezervationapp.dto.AdminDto;
 import com.ecetasci.restaurantrezervationapp.entity.Admin;
 import com.ecetasci.restaurantrezervationapp.entity.RestaurantTable;
 import com.ecetasci.restaurantrezervationapp.service.AdminService;
@@ -18,9 +19,9 @@ public class AdminController {
         return admin;
     }
 
-    @PostMapping
-    public Long saveAdmin(@RequestBody Admin admin){
-        Long id = adminService.save(admin);
+    @PostMapping("/save")
+    public Long saveAdmin(@RequestBody AdminDto adminDto){
+        Long id = adminService.save(adminDto);
         return id;
     }
 

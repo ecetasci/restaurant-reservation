@@ -13,7 +13,7 @@ public class Admin {
     @Column
     private Long id;
 
-    @Column
+    @Column(unique = true)
     private String name;
 
 
