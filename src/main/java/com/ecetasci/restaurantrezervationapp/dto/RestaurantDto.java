@@ -1,13 +1,21 @@
 package com.ecetasci.restaurantrezervationapp.dto;
 
-import java.io.Serializable;
+public class RestaurantDto {
 
-public class RestaurantDto implements Serializable {
     private String name;
     private String address;
     private String phone;
     private String email;
-    private int tablenumber;
+
+    @Override
+    public String toString() {
+        return "RestaurantDto{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 
     public String getName() {
         return name;
@@ -41,11 +49,5 @@ public class RestaurantDto implements Serializable {
         this.email = email;
     }
 
-    public int getTablenumber() {
-        return tablenumber;
-    }
 
-    public void setTablenumber(int tablenumber) {
-        this.tablenumber = tablenumber;
-    }
 }

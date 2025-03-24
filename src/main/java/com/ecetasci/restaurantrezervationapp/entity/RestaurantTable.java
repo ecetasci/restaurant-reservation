@@ -1,7 +1,5 @@
 package com.ecetasci.restaurantrezervationapp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,12 +17,14 @@ public class RestaurantTable {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @ManyToMany
-    @JoinTable(name = "reservation_table",
-            joinColumns = @JoinColumn(name = "restaurant_table_id"),
-            inverseJoinColumns = @JoinColumn(name = "reservation_id"))
-    private List<Reservation> reservations;
+   // @ManyToMany
+    //@JoinTable(name = "reservation_table",
+      //         joinColumns = @JoinColumn(name = "restaurant_table_id"),
+        //       inverseJoinColumns = @JoinColumn(name = "reservation_id"))
+    //private List<Reservation> reservations;
 
+    @ManyToMany(mappedBy = "restaurantTables") // <- DÜZELTİLMİŞ
+    private List<Reservation> reservations;
 
     public RestaurantTable() {
     }

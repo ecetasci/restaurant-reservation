@@ -1,6 +1,5 @@
 package com.ecetasci.restaurantrezervationapp.controller;
 
-import com.ecetasci.restaurantrezervationapp.dto.RestaurantTableDto;
 import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
 import com.ecetasci.restaurantrezervationapp.entity.RestaurantTable;
 import com.ecetasci.restaurantrezervationapp.service.RestaurantTableService;
@@ -13,18 +12,17 @@ public class RestaurantTableController {
     @Autowired
     RestaurantTableService restaurantTableService;
 
-    @PostMapping
-    public Long saveRestaurantTable(@RequestBody RestaurantTableDto restaurantTable){
-        Long id = restaurantTableService.saveRestaurantTable(restaurantTable);
-        return id;
-    }
+    //  @PostMapping
+    //public Long saveRestaurantTable(@RequestBody RestaurantTable restaurantTable){
+    //  Long id = restaurantTableService.saveRestaurantTable(restaurantTable);
+    //return id;
+    //}
 
-    @GetMapping("/{id}")
-    public RestaurantTable getRestaurantTable(@PathVariable Long id) {
-        RestaurantTable restaurantTable = restaurantTableService.getRestaurantTableById(id);
-        return restaurantTable;
-    }
-
+    //  @GetMapping("/{id}")
+    //public RestaurantTable getRestaurantTable(@PathVariable Long id) {
+    //  RestaurantTable restaurantTable = restaurantTableService.getRestaurantTableById(id);
+    //return restaurantTable;
+//}
 
 
 }
