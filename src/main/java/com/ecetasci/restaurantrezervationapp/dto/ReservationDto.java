@@ -19,15 +19,6 @@ public class ReservationDto {
 
     private String description;
 
-    private List<Long> restaurantTableIds;
-
-    public List<Long> getRestaurantTableIds() {
-        return restaurantTableIds;
-    }
-
-    public void setRestaurantTableIds(List<Long> restaurantTableId) {
-        this.restaurantTableIds = restaurantTableId;
-    }
 
     public String getDescription() {
         return description;

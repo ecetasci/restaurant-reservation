@@ -30,10 +30,4 @@ public class RestaurantController {
     //return id;
     //}
 
-    @PostMapping("/create")
-    public Long createRestaurant(@RequestBody RestaurantDto restaurant) {
-        return restaurantService.saveRestaurant(restaurant);
-    }
-
-
 }

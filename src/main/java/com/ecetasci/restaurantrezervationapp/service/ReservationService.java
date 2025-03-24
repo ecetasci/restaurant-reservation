@@ -38,10 +38,11 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public Reservation getReservationById(Long id) {
+    public ReservationDto getReservationById(Long id) {
         Optional<Reservation> reservationOptional = reservationRepository.findById(id);
         if (reservationOptional.isPresent()) {
-            return reservationOptional.get();
+            Reservation reservation = reservationOptional.get();
+            return getReservationDto(reservation);
         } else
             throw new NoSuchElementException("Reservation not found with id: " + id);
     }
@@ -69,18 +70,26 @@ public class ReservationService {
         List<ReservationDto> response = new ArrayList<>();
 
         for (Reservation item : entities) {
-            ReservationDto dto = new ReservationDto();
-            dto.setReservationTime(item.getReservationTime());
-            dto.setCustomerName(item.getCustomer().getName());
-            dto.setPeopleCounts(item.getPeopleCount());
-            dto.setRestaurantId(item.getReservationId());
-            dto.setCustomerPhoneNumber(item.getCustomer().getPhoneNumber());
-
+            ReservationDto dto = getReservationDto(item);
             response.add(dto);
         }
 
         return response;
     }
+
+    private ReservationDto getReservationDto(Reservation reservation) {
+        ReservationDto dto = new ReservationDto();
+        dto.setId(reservation.getReservationId());
+        dto.setRestaurantId(reservation.getRestaurant().getId());
+        dto.setCustomerName(reservation.getCustomer().getName());
+        dto.setCustomerPhoneNumber(reservation.getCustomer().getPhoneNumber());
+        dto.setPeopleCounts(reservation.getPeopleCount());
+        dto.setReservationTime(reservation.getReservationTime());
+        dto.setDescription(reservation.getDescription());
+        return dto;
+    }
+
+
 
 
     @Transactional
