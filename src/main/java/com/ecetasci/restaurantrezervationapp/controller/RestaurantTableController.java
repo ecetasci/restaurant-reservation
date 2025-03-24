@@ -12,18 +12,17 @@ public class RestaurantTableController {
     @Autowired
     RestaurantTableService restaurantTableService;
 
-    @PostMapping
-    public Long saveRestaurantTable(@RequestBody RestaurantTable restaurantTable){
-        Long id = restaurantTableService.saveRestaurantTable(restaurantTable);
-        return id;
-    }
+    //  @PostMapping
+    //public Long saveRestaurantTable(@RequestBody RestaurantTable restaurantTable){
+    //  Long id = restaurantTableService.saveRestaurantTable(restaurantTable);
+    //return id;
+    //}
 
-    @GetMapping("/{id}")
-    public RestaurantTable getRestaurantTable(@PathVariable Long id) {
-        RestaurantTable restaurantTable = restaurantTableService.getRestaurantTableById(id);
-        return restaurantTable;
-    }
-
+    //  @GetMapping("/{id}")
+    //public RestaurantTable getRestaurantTable(@PathVariable Long id) {
+    //  RestaurantTable restaurantTable = restaurantTableService.getRestaurantTableById(id);
+    //return restaurantTable;
+//}
 
 
 }

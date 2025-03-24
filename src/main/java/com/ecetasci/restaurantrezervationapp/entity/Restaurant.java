@@ -120,4 +120,8 @@ public class Restaurant {
     public void setTablenumber(Integer tablenumber) {
         this.tablenumber = tablenumber;
     }
+
+    public void setRestaurantTableIds(List<Long> allTableIds) {
+
+    }
 }

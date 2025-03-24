@@ -35,16 +35,15 @@ public class ReservationController {
         return ResponseEntity.ok(dtos);
     }
 
-    @PostMapping("/save")
-    public Long saveReservation(@RequestBody Reservation reservation) {
-        return reservationService.saveReservation(reservation);
-    }
 
     @PostMapping("/create")
     public Long create(@RequestBody ReservationDto reservationDto) {
         return reservationService.createReservation(reservationDto);
     }
 
-
+/* @PostMapping("/save")
+    //public Long saveReservation(@RequestBody Reservation reservation) {
+      //  return reservationService.saveReservation(reservation);
+   }*/
 
 }

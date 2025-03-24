@@ -3,6 +3,7 @@ package com.ecetasci.restaurantrezervationapp.dto;
 import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ReservationDto {
     private Long restaurantId;
@@ -15,6 +16,25 @@ public class ReservationDto {
 
     private LocalDateTime reservationTime;
 
+    private String description;
+
+    private List<Long> restaurantTableIds;
+
+    public List<Long> getRestaurantTableIds() {
+        return restaurantTableIds;
+    }
+
+    public void setRestaurantTableIds(List<Long> restaurantTableId) {
+        this.restaurantTableIds = restaurantTableId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getCustomerName() {
         return customerName;

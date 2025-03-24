@@ -26,10 +26,32 @@ public class Reservation {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @ManyToMany(mappedBy = "reservations",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+
+    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    // BURASI DÜZELTİLDİ: Artık ilişkinin asıl sahibi burasıdır.
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "reservation_table",  // İlişkiyi tutan tablo adı
+            joinColumns = @JoinColumn(name = "reservation_id"),  // Bu entity'nin id'si
+            inverseJoinColumns = @JoinColumn(name = "restaurant_table_id") // Karşı tarafın id'si
+            )
     private List<RestaurantTable> restaurantTables;
+    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+   // @ManyToMany(mappedBy = "reservations",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    //private List<RestaurantTable> restaurantTables;
 
     private Long peopleCount;
+
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Long getPeopleCount() {
         return peopleCount;

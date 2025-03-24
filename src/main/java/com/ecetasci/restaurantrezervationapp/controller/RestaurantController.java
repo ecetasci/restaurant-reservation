@@ -1,5 +1,6 @@
 package com.ecetasci.restaurantrezervationapp.controller;
 
+import com.ecetasci.restaurantrezervationapp.dto.RestaurantDto;
 import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
 import com.ecetasci.restaurantrezervationapp.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +14,21 @@ public class RestaurantController {
     private RestaurantService restaurantService;
 
     @GetMapping("/{id}")
-    public Restaurant getRestaurant(@PathVariable Long id) {
+    public RestaurantDto getRestaurant(@PathVariable Long id) {
         Restaurant restaurant = restaurantService.getById(id);
-        return restaurant;
+        RestaurantDto restaurantDto = new RestaurantDto();
+        restaurantDto.setName(restaurant.getName());
+        restaurantDto.setAddress(restaurant.getAddress());
+        restaurantDto.setPhone(restaurant.getPhone());
+        restaurantDto.setEmail(restaurant.getEmail());
+        return restaurantDto;
     }
 
-    @PostMapping("/save")
-    public Long saveRestaurant(@RequestBody Restaurant restaurant) {
-        Long id = restaurantService.saveRestaurant(restaurant);
-        return id;
-    }
+    // @PostMapping("/save")
+    //public Long saveRestaurant(@RequestBody Restaurant restaurant) {
+    //  Long id = restaurantService.saveRestaurant(restaurant);
+    //return id;
+    //}
 
 
 }
