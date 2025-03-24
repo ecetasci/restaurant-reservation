@@ -1,17 +1,14 @@
 package com.ecetasci.restaurantrezervationapp.service;
 
+import com.ecetasci.restaurantrezervationapp.dto.AdminDto;
 import com.ecetasci.restaurantrezervationapp.dto.ReservationDto;
-import com.ecetasci.restaurantrezervationapp.entity.Customer;
-import com.ecetasci.restaurantrezervationapp.entity.Reservation;
-import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
-import com.ecetasci.restaurantrezervationapp.entity.RestaurantTable;
-import com.ecetasci.restaurantrezervationapp.repository.CustomerRepository;
-import com.ecetasci.restaurantrezervationapp.repository.ReservationRepository;
-import com.ecetasci.restaurantrezervationapp.repository.RestaurantRepository;
-import com.ecetasci.restaurantrezervationapp.repository.RestaurantTableRepository;
+import com.ecetasci.restaurantrezervationapp.entity.*;
+import com.ecetasci.restaurantrezervationapp.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,44 +31,56 @@ public class ReservationService {
     @Autowired
     RestaurantTableRepository restaurantTableRepository;
 
+    @Autowired
+    AdminRepository adminRepository;
+
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
     }
 
-    public ReservationDto getReservationById(Long id) {
+    public Reservation getReservationById(Long id) {
         Optional<Reservation> reservationOptional = reservationRepository.findById(id);
         if (reservationOptional.isPresent()) {
-            Reservation reservation = reservationOptional.get();
-            return getReservationDto(reservation);
+            return reservationOptional.get();
         } else
             throw new NoSuchElementException("Reservation not found with id: " + id);
     }
 
     public Long saveReservation(Reservation reservation) {
         Reservation savedReservation = reservationRepository.save(reservation);
-        return savedReservation.getReservationId();
-    }
-
-    public List<ReservationDto> getAllDtos() {
-        List<Reservation> all = reservationRepository.findAll();
-        return all.stream().map(this::getReservationDto).toList();
-    }
-
-    private ReservationDto getReservationDto(Reservation reservation) {
-        ReservationDto dto = new ReservationDto();
-        dto.setId(reservation.getReservationId());
-        dto.setRestaurantId(reservation.getRestaurant().getId());
-        dto.setCustomerName(reservation.getCustomer().getName());
-        dto.setCustomerPhoneNumber(reservation.getCustomer().getPhoneNumber());
-        dto.setPeopleCounts(reservation.getPeopleCount());
-        dto.setReservationTime(reservation.getReservationTime());
-        return dto;
+        Long id = savedReservation.getReservationId();
+        return id;
     }
 
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
     }
 
+    public List<Reservation> getAll(AdminDto adminDto) {
+        Optional<Admin> admin = adminRepository.getAdminByName(adminDto.getName());
+        if(admin.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Admin Bulunamadı");
+        }
+        return reservationRepository.findAll();
+    }
+
+    public List<ReservationDto> getAllDtos(AdminDto adminDto) {
+        List<Reservation> entities = getAll(adminDto);
+        List<ReservationDto> response = new ArrayList<>();
+
+        for (Reservation item : entities) {
+            ReservationDto dto = new ReservationDto();
+            dto.setReservationTime(item.getReservationTime());
+            dto.setCustomerName(item.getCustomer().getName());
+            dto.setPeopleCounts(item.getPeopleCount());
+            dto.setRestaurantId(item.getReservationId());
+            dto.setCustomerPhoneNumber(item.getCustomer().getPhoneNumber());
+
+            response.add(dto);
+        }
+
+        return response;
+    }
 
 
     @Transactional
