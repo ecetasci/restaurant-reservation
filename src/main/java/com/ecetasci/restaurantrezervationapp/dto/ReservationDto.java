@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ReservationDto {
+    private Long id;
     private Long restaurantId;
 
     private String customerName;
@@ -18,15 +19,6 @@ public class ReservationDto {
 
     private String description;
 
-    private List<Long> restaurantTableIds;
-
-    public List<Long> getRestaurantTableIds() {
-        return restaurantTableIds;
-    }
-
-    public void setRestaurantTableIds(List<Long> restaurantTableId) {
-        this.restaurantTableIds = restaurantTableId;
-    }
 
     public String getDescription() {
         return description;
@@ -74,5 +66,13 @@ public class ReservationDto {
 
     public void setRestaurantId(Long restaurantId) {
         this.restaurantId = restaurantId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -21,7 +21,7 @@ public class ReservationController {
     ReservationService reservationService;
 
     @GetMapping("/{id}")
-    public Reservation getReservation(@PathVariable Long id) {
+    public ReservationDto getReservation(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
 
@@ -41,9 +41,10 @@ public class ReservationController {
         return reservationService.createReservation(reservationDto);
     }
 
-/* @PostMapping("/save")
-    //public Long saveReservation(@RequestBody Reservation reservation) {
-      //  return reservationService.saveReservation(reservation);
-   }*/
+    @PostMapping("/save")
+    @Deprecated
+    public Long saveReservation(@RequestBody Reservation reservation) {
+        return reservationService.saveReservation(reservation);
+    }
 
 }
