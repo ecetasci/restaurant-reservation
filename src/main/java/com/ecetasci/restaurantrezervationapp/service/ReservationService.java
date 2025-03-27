@@ -85,6 +85,7 @@ public class ReservationService {
         dto.setRestaurantId(reservation.getRestaurant().getId());
         dto.setCustomerName(reservation.getCustomer().getName());
         dto.setCustomerPhoneNumber(reservation.getCustomer().getPhoneNumber());
+        dto.setCustomerEmail(reservation.getEmail());
         dto.setPeopleCounts(reservation.getPeopleCount());
         dto.setReservationTime(reservation.getReservationTime());
         dto.setDescription(reservation.getDescription());
