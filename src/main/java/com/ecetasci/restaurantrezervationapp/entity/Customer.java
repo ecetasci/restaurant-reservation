@@ -19,6 +19,9 @@ public class Customer {
     @Column
     private String phoneNumber;
 
+    @Column
+    private String email;
+
     @OneToMany(mappedBy = "customer")
     private List<Reservation> reservations;
 
@@ -26,9 +29,10 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer( String name, String phoneNumber) {
+    public Customer( String name, String phoneNumber, String email) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 
     public Customer(Long id, String name, String phoneNumber, List<Reservation> reservations) {
@@ -69,5 +73,13 @@ public class Customer {
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

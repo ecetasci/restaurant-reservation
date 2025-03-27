@@ -29,6 +29,8 @@ public class ReservationController {
     //RequestParam -> /api/admin?yas=34&isim=ece
     //Pathvariables -> /api/admin/{id} buradaki {id} pathvariables oluyor /api/admin/2
     //RequestBody -> POST method JSON datayı yakalamak
+
+    @Deprecated
     @PostMapping("/list")
     public ResponseEntity<List<ReservationDto>> getAllreservation(@RequestBody AdminDto request) {
         List<ReservationDto> dtos = reservationService.getAllDtos(request);

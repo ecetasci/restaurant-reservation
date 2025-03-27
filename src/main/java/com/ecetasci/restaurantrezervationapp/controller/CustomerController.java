@@ -32,6 +32,7 @@ public class CustomerController {
         customerDto.setName(customer.getName());
         customerDto.setPhoneNumber(customer.getPhoneNumber());
         customerDto.setId(customer.getId());
+        customerDto.setEmail(customer.getEmail());
         return ResponseEntity.ok(customerDto);
     }
 }

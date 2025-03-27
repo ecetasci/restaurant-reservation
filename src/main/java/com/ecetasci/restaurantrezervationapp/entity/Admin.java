@@ -16,6 +16,7 @@ public class Admin {
     @Column(unique = true)
     private String name;
 
+    private String password;
 
     @OneToMany(mappedBy = "admin")
     private List<Restaurant> restaurant;
@@ -55,5 +56,13 @@ public class Admin {
 
     public void setRestaurant(List<Restaurant> restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

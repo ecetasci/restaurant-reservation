@@ -57,8 +57,10 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
+
+
     public List<Reservation> getAll(AdminDto adminDto) {
-        Optional<Admin> admin = adminRepository.getAdminByName(adminDto.getName());
+        Optional<Admin> admin = adminRepository.findByNameAndPassword(adminDto.getName(), adminDto.getPassword());
         if (admin.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Admin Bulunamadı");
         }
@@ -279,6 +281,7 @@ public class ReservationService {
         Customer customer = new Customer();
         customer.setName(request.getCustomerName());
         customer.setPhoneNumber(request.getCustomerPhoneNumber());
+        customer.setEmail(request.getCustomerEmail());
         Customer savedcustomer = customerRepository.save(customer);
         return customer;
     }

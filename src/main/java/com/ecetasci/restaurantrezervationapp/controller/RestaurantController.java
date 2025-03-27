@@ -24,10 +24,11 @@ public class RestaurantController {
         return restaurantDto;
     }
 
-    // @PostMapping("/save")
-    //public Long saveRestaurant(@RequestBody Restaurant restaurant) {
-    //  Long id = restaurantService.saveRestaurant(restaurant);
-    //return id;
-    //}
+    @Deprecated
+    @PostMapping("/save")
+    public Long saveRestaurant(@RequestBody Restaurant restaurant) {
+        Long id = restaurantService.saveRestaurant(restaurant);
+        return id;
+    }
 
 }

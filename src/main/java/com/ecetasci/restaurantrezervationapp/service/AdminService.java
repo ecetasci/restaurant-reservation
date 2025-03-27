@@ -4,7 +4,9 @@ import com.ecetasci.restaurantrezervationapp.dto.AdminDto;
 import com.ecetasci.restaurantrezervationapp.entity.Admin;
 import com.ecetasci.restaurantrezervationapp.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,8 +31,7 @@ public class AdminService {
     }
 
 
-
-    public Admin getAdminById(Long id) {//boolean mı yapsam?
+    public Admin getAdminById(Long id) {
         Optional<Admin> admin = adminRepository.findById(id);
         if (admin.isPresent()) {
             return admin.get();
@@ -46,9 +47,13 @@ public class AdminService {
             return ("Admin not found with id: " + id);
     }
 
-    /* public List<Admin> findAll() {
-      return adminRepository.findAll();
-    } */
+   public String updateAdminPassword(AdminDto adminDto, String newPassword ){
+       Admin admin = adminRepository.findByNameAndPassword(adminDto.getName(), adminDto.getPassword())
+               .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Admin bulunamadı"));
+        admin.setPassword(newPassword);
+        adminRepository.save(admin);
+        return "Parola değiştirildi";
+   }
 
 
 }

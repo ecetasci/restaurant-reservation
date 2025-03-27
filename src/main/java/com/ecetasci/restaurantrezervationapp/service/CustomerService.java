@@ -22,6 +22,7 @@ public class CustomerService {
         Customer customer = new Customer();//nesne oluşturduktan sonra dtodan gelen parametreyle verilerle set ediyoruz.
         customer.setName(customerDto.getName());
         customer.setPhoneNumber(customerDto.getPhoneNumber());
+        customer.setEmail(customerDto.getEmail());
 
         Customer save = customerRepository.save(customer);
         return save.getId();

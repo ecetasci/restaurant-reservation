@@ -6,12 +6,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ReservationDto {
+
     private Long id;
+
     private Long restaurantId;
 
     private String customerName;
 
     private String customerPhoneNumber;
+
+    private String customerEmail;
 
     private Long peopleCounts;
 
@@ -74,5 +78,13 @@ public class ReservationDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
     }
 }
