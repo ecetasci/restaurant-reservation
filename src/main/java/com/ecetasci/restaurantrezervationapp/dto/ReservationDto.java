@@ -1,9 +1,8 @@
 package com.ecetasci.restaurantrezervationapp.dto;
 
-import com.ecetasci.restaurantrezervationapp.entity.Restaurant;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 public class ReservationDto {
 
