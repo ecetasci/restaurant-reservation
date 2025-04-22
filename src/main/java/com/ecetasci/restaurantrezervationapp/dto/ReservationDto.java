@@ -11,6 +11,16 @@ public class ReservationDto {
 
     private Long restaurantId;
 
+    private Long reservationId;
+
+    public Long getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
+    }
+
     private String customerName;
 
     private String customerPhoneNumber;

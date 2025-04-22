@@ -34,7 +34,7 @@ public class AdminController {
         return id;
     }
 
-    // Eklenen metod: Admin login kontrolüyle rezervasyonları listeleme
+    // Admin login kontrolüyle rezervasyonları listeleme
     @PostMapping("/reservations")
     public ResponseEntity<List<ReservationDto>> getAllReservations(@RequestBody AdminDto adminDto) {
         List<ReservationDto> reservations = reservationService.getAllDtos(adminDto);

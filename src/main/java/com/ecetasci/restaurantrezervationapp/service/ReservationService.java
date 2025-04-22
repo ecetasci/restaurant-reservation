@@ -3,19 +3,21 @@ package com.ecetasci.restaurantrezervationapp.service;
 import com.ecetasci.restaurantrezervationapp.dto.AdminDto;
 import com.ecetasci.restaurantrezervationapp.dto.ReservationDto;
 import com.ecetasci.restaurantrezervationapp.entity.*;
+import com.ecetasci.restaurantrezervationapp.exception.NotEnoughTableException;
+import com.ecetasci.restaurantrezervationapp.exception.ReservationCouldntFind;
 import com.ecetasci.restaurantrezervationapp.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -33,6 +35,9 @@ public class ReservationService {
 
     @Autowired
     AdminRepository adminRepository;
+
+    @Autowired
+    private View error;
 
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
@@ -56,7 +61,6 @@ public class ReservationService {
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
     }
-
 
 
     public List<Reservation> getAll(AdminDto adminDto) {
@@ -92,9 +96,6 @@ public class ReservationService {
         return dto;
     }
 
-
-
-
     @Transactional
     public Long createReservation(ReservationDto request) {
         validateAvailableTables(request);
@@ -122,17 +123,14 @@ public class ReservationService {
             reservation.setDescription(request.getDescription());
             reservationRepository.save(reservation);
 
+            //Table availability control
             Double neededTableCount = getNeededTableCount(request, reservation);
-
             List<RestaurantTable> allTables = getRestaurantTables(request);
-
             List<RestaurantTable> reservedTables = new ArrayList<>();//rezerve edilecek masalar
-
             List<Long> allTableIds = getAllTableIds(request);
-
             List<Long> reservedTableIds = new ArrayList<>();//rezerve edilecek masaIds
 
-            //İstenen kadar veya daha fazla müsait masa varsa müsait masalardan rezerve masalara atama yap
+            //müsait masalardan rezerve masalara atama yap
             if (allTables.size() >= neededTableCount) {
                 for (int i = 0; i < neededTableCount; i++) {
                     RestaurantTable restaurantTable = allTables.remove(0);
@@ -148,19 +146,18 @@ public class ReservationService {
                 reservation.setRestaurantTables(reservedTables);
             }
 
+            //Customer exist control
             Optional<Customer> existCustomer = getCustomerOptional(request);
-
-            //kayıtlı musteriyse
             if (existCustomer.isPresent()) {
                 reservation.setCustomer(existCustomer.get());
                 saveReservation(reservation);
-                //kayıtlı müşteri değilse
+
             } else {
                 Customer customer = saveNewCustomer(request);
                 reservation.setCustomer(customer);
                 saveReservation(reservation);
             }
-            return reservation.getReservationId();
+            return reservation.getReservationId(); //Başarılıysa dönüş
 
         } catch (Exception e) {
             throw e;
@@ -183,7 +180,6 @@ public class ReservationService {
 
         Long requestedRestaurantId = getRequestedRestaurantId(request);
         Restaurant restaurant = getRestaurant(requestedRestaurantId);
-
         List<Reservation> restaurantsReservations = reservationRepository.findReservationByRestaurantId(requestedRestaurantId);
         List<Reservation> crashedReservations = getCrashedReservations(request, restaurantsReservations);
 
@@ -191,29 +187,21 @@ public class ReservationService {
         reservation.setRestaurant(restaurant);
         reservation.setReservationTime(request.getReservationTime());
 
-        //
         List<Long> allTableIds = getAvailableTableIdsForGivenTime(request);
 
-
-       // List<Long> allTableIds = getAllTableIds(request);
-        //List<RestaurantTable> reservedTable = new ArrayList<>();// rezerve edilmiş masaları saklamak için kullanılacak.
         // Zaten rezerve edilmiş masa id'lerini ayrı tut
         List<Long> reservedTableIds = new ArrayList<>(getReservedTableIdsFromCrashedReservations(crashedReservations, new ArrayList<>()));
 
         // rezerve edilmişleri çıkar, kalanları müsait masalar olarak tut
         allTableIds.removeAll(reservedTableIds);
-
-        // filterAvailableTableIds(reservedTableIds, allTableIds);
-
         checkAvailableTables(allTableIds);
-
         double neededTableCount = getNeededTableCount(request, reservation);
 
         System.out.println("Başlangıçta Müsait Masalar: " + allTableIds);
         System.out.println("Başlangıçta Müsait Masa Sayısı: " + allTableIds.size());
 
         if (allTableIds == null || allTableIds.size() < neededTableCount) {
-            throw new IllegalArgumentException("Not enough available tables!");
+            throw new NotEnoughTableException("Yeterli Masa Yok");
         }
 
         int tableCount = (int) neededTableCount;
@@ -222,37 +210,20 @@ public class ReservationService {
             // Yeni rezervasyon yapılacak masa id'lerini ayrı listeye al
             List<Long> newlyReservedTableIds = new ArrayList<>();
 
-            // if (allTableIds.size() >= tableCount) {
-            // for (int i = 0; i < tableCount; i++) {
-            //   System.out.println("Döngü: " + i);
-            // Long tableId = allTableIds.remove(0);
-
-            //System.out.println(tableId);
-            //reservedTableIds.add(tableId);
-            //}
-
             for (int i = 0; i < tableCount; i++) {
                 System.out.println("Döngü: " + i);
                 Long tableId = allTableIds.remove(0);
                 System.out.println("Yeni rezerve edilen masa id: " + tableId);
                 newlyReservedTableIds.add(tableId);
             }
-
-            // System.out.println("Rezerve Edilen Masalar: " + reservedTableIds);
-            //System.out.println("Güncellenmiş Müsait Masalar: " + allTableIds);
-
-
             System.out.println("Yeni Rezerve Edilen Masalar: " + newlyReservedTableIds);
             System.out.println("Güncellenmiş Müsait Masalar: " + allTableIds);
 
             restaurant.setRestaurantTableIds(allTableIds);
 
-          //  System.out.println("Güncellenmiş Müsait Masalar requeste set edildi: " + allTableIds);
+            //  System.out.println("Güncellenmiş Müsait Masalar requeste set edildi: " + allTableIds);
             // Yeni rezerve edilen masaları çek
             List<RestaurantTable> reservedTables = restaurantTableRepository.findAllById(newlyReservedTableIds);
-
-            // List<RestaurantTable> restaurantTables = restaurantTableRepository.findAllById(reservedTableIds);
-            // reservedTable.addAll(restaurantTables);
 
             reservation.setRestaurantTables(reservedTables);
             reservation.setPeopleCount(request.getPeopleCounts());
@@ -262,18 +233,17 @@ public class ReservationService {
             //kayıtlı musteriyse
             if (existCustomer.isPresent()) {
                 reservation.setCustomer(existCustomer.get());
+                reservation.setEmail(existCustomer.get().getEmail());
                 //kayıtlı müşteri değilse
             } else {
                 Customer customer = saveNewCustomer(request);
                 reservation.setCustomer(customer);
-                //  reservation.setReservedTables(reservedTable);
-                //  saveReservation(reservation);
+                reservation.setEmail(request.getCustomerEmail());
             }
             saveReservation(reservation);
 
-            //}
         } catch (Exception e) {
-            throw new RuntimeException("Hata");
+            throw new RuntimeException("Hata: Rezervasyon kaydedilemedi");
         }
         return reservation.getReservationId();
     }
@@ -294,7 +264,7 @@ public class ReservationService {
 
     private static void checkAvailableTables(List<Long> allTableIds) {
         if (allTableIds.isEmpty()) {
-            throw new RuntimeException("Boş Masa yok");
+            throw new NotEnoughTableException("Boş Masa yok");
         }
     }
 
@@ -329,15 +299,14 @@ public class ReservationService {
             reservedTable.addAll(makedReservation.getRestaurantTables());
         }
 
-        //rezerve edilen masaların ıdlerini ayrı listeleyelim
+        //rezerve edilen masaların ıdleri
         List<Long> reservedTableIds = reservedTable.stream().map(RestaurantTable::getRestaurantTableId).toList();
         return reservedTableIds;
     }
 
     private static double getNeededTableCount(ReservationDto request, Reservation reservation) {
         reservation.setPeopleCount(request.getPeopleCounts());
-        double neededTableCount = Math.ceil(Double.valueOf(request.getPeopleCounts()) / 4);
-        return neededTableCount;
+        return Math.ceil(Double.valueOf(request.getPeopleCounts()) / 4);
     }
 
     private static List<Reservation> getCrashedReservations(ReservationDto request, List<Reservation> restaurantsAllreservations) {
@@ -356,7 +325,6 @@ public class ReservationService {
         return restaurant.get();
     }
 
-
     private static long getReservationCount(ReservationDto request, List<Reservation> allReservations) {
         long reservationCount = allReservations.stream().filter(reservation ->
                         request.getReservationTime().isAfter(reservation.getReservationTime().minusHours(4))
@@ -366,7 +334,7 @@ public class ReservationService {
         return reservationCount;
     }
 
-    //aı // Bu metot, rezervasyon talebinde bulunan kişi sayısına ve restoranın mevcut masa durumuna göre
+    // Bu metot, rezervasyon talebinde bulunan kişi sayısına ve restoranın mevcut masa durumuna göre
     // rezervasyon yapılabilecek yeterli masa olup olmadığını kontrol eder.
     // Eğer yeterli masa yoksa hata fırlatır ve rezervasyonun yapılmasını engeller.
     private void validateAvailableTables(ReservationDto request) {
@@ -375,10 +343,14 @@ public class ReservationService {
 
         List<Reservation> crashedReservations = reservationRepository
                 .findReservationByRestaurantId(request.getRestaurantId()).stream()
-                .filter(reservation -> !request.getReservationTime().isAfter(reservation.getReservationTime().minusHours(4))
-                        && request.getReservationTime().isBefore(reservation.getReservationTime().plusHours(4))
-                        || request.getReservationTime().isEqual(reservation.getReservationTime()))
-                .toList();
+                .filter(reservation -> {
+                    LocalDateTime existingTime = reservation.getReservationTime();
+                    LocalDateTime requestTime = request.getReservationTime();
+
+                    return !requestTime.isBefore(existingTime.minusHours(4)) &&
+                            !requestTime.isAfter(existingTime.plusHours(4));
+                }).toList();
+
 
         int reservedTableCount = crashedReservations.stream()
                 .mapToInt(r -> r.getRestaurantTables().size())
@@ -387,7 +359,7 @@ public class ReservationService {
         double neededTableCount = Math.ceil(request.getPeopleCounts() / 4.0);
 
         if ((totalTableCount - reservedTableCount) < neededTableCount) {
-            throw new IllegalArgumentException("Not enough available tables!");
+            throw new NotEnoughTableException("Yeterli Masa Yok");
         }
     }
 
@@ -398,16 +370,66 @@ public class ReservationService {
         List<Reservation> crashedReservations = getCrashedReservations(
                 request, reservationRepository.findReservationByRestaurantId(request.getRestaurantId())
         );
-
         // çakışan rezervasyonların masa id'lerini çıkar
         List<Long> reservedTableIds = getReservedTableIdsFromCrashedReservations(crashedReservations, new ArrayList<>());
 
-        // müsait masaları döndür
+        // müsait masaları dön
         allTableIds.removeAll(reservedTableIds);
 
         return allTableIds;
     }
 
+    @Transactional
+    public Long updateReservation(ReservationDto request) {
+        Optional<Reservation> reservationOptional = reservationRepository.findById(request.getReservationId());
+
+        if (reservationOptional.isEmpty()) {
+            throw new ReservationCouldntFind("Reservation couldn't find");
+
+        } else {
+            Reservation reservation = reservationOptional.get();
+            reservation.setEmail(request.getCustomerEmail());
+            reservation.getCustomer().setName(request.getCustomerName());//test et
+            reservation.setDescription(request.getDescription());
+            reservation.getCustomer().setPhoneNumber(request.getCustomerPhoneNumber());
+            reservation.getCustomer().setEmail(request.getCustomerEmail());
+
+            if (!reservation.getReservationTime().isEqual(request.getReservationTime()) ||
+                    !reservation.getPeopleCount().equals(request.getPeopleCounts())) {
+
+                Long newReservationId = createReservation(request);
+                System.out.println("Yeni rezervasyon id:" + newReservationId);
+                delete(reservation.getReservationId());
+                System.out.println("Eski rezervasyon silindi");
+
+                return newReservationId;
+
+            } else {
+                reservation.setPeopleCount(request.getPeopleCounts());
+                reservation.setReservationTime(request.getReservationTime());
+                Reservation updatedReservation = reservationRepository.save(reservation);
+                // DTO
+                ReservationDto reservationDto = new ReservationDto();
+                reservationDto.setCustomerEmail(updatedReservation.getCustomer().getEmail());
+                reservationDto.setCustomerPhoneNumber(updatedReservation.getCustomer().getPhoneNumber());
+                reservationDto.setCustomerName(updatedReservation.getCustomer().getName());
+                reservationDto.setDescription(updatedReservation.getDescription());
+                reservationDto.setReservationTime(updatedReservation.getReservationTime());
+                reservationDto.setPeopleCounts(updatedReservation.getPeopleCount());
+                reservationDto.setReservationId(updatedReservation.getReservationId());
+                reservationDto.setRestaurantId(updatedReservation.getRestaurant().getId());
+
+                return reservationDto.getReservationId();
+            }
+        }
+    }
+
+    public Long delete(Long id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(()
+                -> new ReservationCouldntFind("Reservation couldn't find"));
+        reservationRepository.delete(reservation);
+        return reservation.getReservationId();
+    }
 }
 
 
