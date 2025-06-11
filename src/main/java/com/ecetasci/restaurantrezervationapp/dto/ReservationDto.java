@@ -12,14 +12,6 @@ public class ReservationDto {
 
     private Long reservationId;
 
-    public Long getReservationId() {
-        return reservationId;
-    }
-
-    public void setReservationId(Long reservationId) {
-        this.reservationId = reservationId;
-    }
-
     private String customerName;
 
     private String customerPhoneNumber;
@@ -95,5 +87,13 @@ public class ReservationDto {
 
     public void setCustomerEmail(String customerEmail) {
         this.customerEmail = customerEmail;
+    }
+
+    public Long getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
     }
 }

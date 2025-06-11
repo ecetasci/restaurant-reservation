@@ -1,9 +1,7 @@
 package com.ecetasci.restaurantrezervationapp.service;
 
-import com.ecetasci.restaurantrezervationapp.dto.AdminDto;
 import com.ecetasci.restaurantrezervationapp.dto.CustomerDto;
 import com.ecetasci.restaurantrezervationapp.dto.ReservationDto;
-import com.ecetasci.restaurantrezervationapp.entity.Admin;
 import com.ecetasci.restaurantrezervationapp.entity.Customer;
 import com.ecetasci.restaurantrezervationapp.entity.Reservation;
 import com.ecetasci.restaurantrezervationapp.repository.CustomerRepository;
@@ -33,7 +31,7 @@ public class CustomerService {
         Customer customer = new Customer();//nesne oluşturduktan sonra dtodan gelen parametreyle verilerle set ediyoruz.
         customer.setName(customerDto.getName());
         customer.setPhoneNumber(customerDto.getPhoneNumber());
-        customer.setEmail(customerDto.getEmail());
+        customer.setCustomerEmail(customerDto.getCustomerEmail());
 
         Customer save = customerRepository.save(customer);
         return save.getId();
@@ -89,6 +87,7 @@ public class CustomerService {
     private ReservationDto getReservationDto(Reservation reservation) {
         ReservationDto dto = new ReservationDto();
         dto.setId(reservation.getReservationId());
+        dto.setReservationId(reservation.getReservationId());
         dto.setRestaurantId(reservation.getRestaurant().getId());
         dto.setCustomerName(reservation.getCustomer().getName());
         dto.setCustomerPhoneNumber(reservation.getCustomer().getPhoneNumber());

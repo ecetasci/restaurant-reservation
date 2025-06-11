@@ -20,7 +20,7 @@ public class Customer {
     private String phoneNumber;
 
     @Column
-    private String email;
+    private String customerEmail;
 
     @OneToMany(mappedBy = "customer")
     private List<Reservation> reservations;
@@ -29,10 +29,10 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer( String name, String phoneNumber, String email) {
+    public Customer( String name, String phoneNumber, String customerEmail) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.email = email;
+        this.customerEmail = customerEmail;
     }
 
     public Customer(Long id, String name, String phoneNumber, List<Reservation> reservations) {
@@ -75,11 +75,11 @@ public class Customer {
         this.reservations = reservations;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCustomerEmail() {
+        return customerEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
     }
 }

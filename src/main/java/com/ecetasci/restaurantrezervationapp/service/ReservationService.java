@@ -55,6 +55,7 @@ public class ReservationService {
     public Long saveReservation(Reservation reservation) {
         Reservation savedReservation = reservationRepository.save(reservation);
         Long id = savedReservation.getReservationId();
+        reservation.setReservationId(savedReservation.getReservationId());
         return id;
     }
 
@@ -86,6 +87,7 @@ public class ReservationService {
     private ReservationDto getReservationDto(Reservation reservation) {
         ReservationDto dto = new ReservationDto();
         dto.setId(reservation.getReservationId());
+        dto.setReservationId(reservation.getReservationId());
         dto.setRestaurantId(reservation.getRestaurant().getId());
         dto.setCustomerName(reservation.getCustomer().getName());
         dto.setCustomerPhoneNumber(reservation.getCustomer().getPhoneNumber());
@@ -121,7 +123,8 @@ public class ReservationService {
             reservation.setReservationTime(request.getReservationTime());
             reservation.setPeopleCount(request.getPeopleCounts());
             reservation.setDescription(request.getDescription());
-            reservationRepository.save(reservation);
+            saveReservation(reservation);
+            //reservationRepository.save(reservation);
 
             //Table availability control
             Double neededTableCount = getNeededTableCount(request, reservation);
@@ -150,11 +153,13 @@ public class ReservationService {
             Optional<Customer> existCustomer = getCustomerOptional(request);
             if (existCustomer.isPresent()) {
                 reservation.setCustomer(existCustomer.get());
+                reservation.setEmail(existCustomer.get().getCustomerEmail());
                 saveReservation(reservation);
 
             } else {
                 Customer customer = saveNewCustomer(request);
                 reservation.setCustomer(customer);
+                reservation.setEmail(request.getCustomerEmail());
                 saveReservation(reservation);
             }
             return reservation.getReservationId(); //Başarılıysa dönüş
@@ -233,11 +238,14 @@ public class ReservationService {
             //kayıtlı musteriyse
             if (existCustomer.isPresent()) {
                 reservation.setCustomer(existCustomer.get());
-                reservation.setEmail(existCustomer.get().getEmail());
+                reservation.getCustomer().setCustomerEmail(existCustomer.get().getCustomerEmail());
+                reservation.setEmail(existCustomer.get().getCustomerEmail());
+
                 //kayıtlı müşteri değilse
             } else {
                 Customer customer = saveNewCustomer(request);
                 reservation.setCustomer(customer);
+                customer.setCustomerEmail(request.getCustomerEmail());
                 reservation.setEmail(request.getCustomerEmail());
             }
             saveReservation(reservation);
@@ -252,7 +260,7 @@ public class ReservationService {
         Customer customer = new Customer();
         customer.setName(request.getCustomerName());
         customer.setPhoneNumber(request.getCustomerPhoneNumber());
-        customer.setEmail(request.getCustomerEmail());
+        customer.setCustomerEmail(request.getCustomerEmail());
         Customer savedcustomer = customerRepository.save(customer);
         return customer;
     }
@@ -392,7 +400,8 @@ public class ReservationService {
             reservation.getCustomer().setName(request.getCustomerName());//test et
             reservation.setDescription(request.getDescription());
             reservation.getCustomer().setPhoneNumber(request.getCustomerPhoneNumber());
-            reservation.getCustomer().setEmail(request.getCustomerEmail());
+            reservation.getCustomer().setCustomerEmail(request.getCustomerEmail());
+            reservation.setReservationId(request.getReservationId());//10.06
 
             if (!reservation.getReservationTime().isEqual(request.getReservationTime()) ||
                     !reservation.getPeopleCount().equals(request.getPeopleCounts())) {
@@ -410,7 +419,7 @@ public class ReservationService {
                 Reservation updatedReservation = reservationRepository.save(reservation);
                 // DTO
                 ReservationDto reservationDto = new ReservationDto();
-                reservationDto.setCustomerEmail(updatedReservation.getCustomer().getEmail());
+                reservationDto.setCustomerEmail(updatedReservation.getCustomer().getCustomerEmail());
                 reservationDto.setCustomerPhoneNumber(updatedReservation.getCustomer().getPhoneNumber());
                 reservationDto.setCustomerName(updatedReservation.getCustomer().getName());
                 reservationDto.setDescription(updatedReservation.getDescription());

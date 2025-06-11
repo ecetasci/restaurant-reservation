@@ -1,5 +1,4 @@
 package com.ecetasci.restaurantrezervationapp.dto;
-import com.ecetasci.restaurantrezervationapp.entity.Customer;
 
 public class CustomerDto {
 
@@ -9,7 +8,7 @@ public class CustomerDto {
 
     private String phoneNumber;
 
-    private String email;
+    private String customerEmail;
 
     public long getId() {
         return id;
@@ -35,11 +34,11 @@ public class CustomerDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCustomerEmail() {
+        return customerEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
     }
 }
